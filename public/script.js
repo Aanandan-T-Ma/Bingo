@@ -12,29 +12,30 @@ var inputs, tds
 var members = []
 var curMember, turn, curMemberIndex
 var striken = []
+var winners = []
 
 gameContainer.style.display = 'none'
 startBtn.style.display = 'none'
 
 socket.on('newClient', data => {
     members.push(data)
-    console.log('New client');
-    console.log(data);
-    console.log(members);
+    // console.log('New client');
+    // console.log(data);
+    // console.log(members);
     renderMembers()
 })
 
 socket.on('clientLeft', data => {
     members = members.filter(m => m.id !== data.id)
-    console.log('Remaining');
-    console.log(members);
+    // console.log('Remaining');
+    // console.log(members);
     renderMembers()
 })
 
 socket.on('members', data => {
     members = data
-    console.log('Members');
-    console.log(members);
+    // console.log('Members');
+    // console.log(members);
     curMemberIndex = members.length - 1
     curMember = members[curMemberIndex]
     renderMembers()
@@ -61,6 +62,7 @@ socket.on('strike', data => {
         if(inputs[i].value == data.number){
             inputs[i].style.cursor = 'default'
             tds[i].style.backgroundColor = 'red'
+            tds[i].classList.remove('td-ready')
             break
         }
     }
@@ -81,13 +83,22 @@ socket.on('start', data => {
 })
 
 socket.on('end', data => {
-    alert(`${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game`)
-    currPlayer.innerHTML = `Winner: ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
     for(let i = 0; i < tds.length; i++){
         tds[i].removeEventListener('click', strikeCell)
         tds[i].classList.remove('td-ready')
         inputs[i].style.cursor = 'default'
     }
+    if(winners.length === 0) {
+        let ms = 0
+        let timer = setInterval(() => {
+            ms += 100
+            if(ms == 500) {
+                clearInterval(timer)
+                announceWinners()
+            }
+        }, 100)
+    }
+    winners.push(data)
 })
 
 function enterRoom() {
@@ -175,11 +186,8 @@ function onStart() {
 }
 
 function strikeCell(event) {
-    console.log('before');
     if(turn !== curMemberIndex) return;
-    console.log('after');
-    let value = Number(document.getElementById(event.target.id).value)
-    console.log(value);
+    let value = event.target.id ? Number(event.target.value) : Number(event.target.childNodes[0].value)
     if(striken[value]) return;
     socket.emit('strike', { id: curMember.id, number: value })
 }
@@ -235,4 +243,19 @@ function checkWin(row, col) {
         }
     }
     return false
+}
+
+function announceWinners() {
+    currPlayer.style.fontSize = 'larger'
+    currPlayer.style.fontWeight = 'bold'
+    if(winners.length === 1){
+        let data = winners[0]
+        alert(`${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game`)
+        currPlayer.innerHTML = `Winner: ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
+    }
+    else {
+        let w = winners.map(winner => winner.name + (winner.id === curMember.id ? ' (You)' : '')).join(', ')
+        alert(`Game ended in a draw between ${w}`)
+        currPlayer.innerHTML = `Draw between ${w}`
+    }
 }

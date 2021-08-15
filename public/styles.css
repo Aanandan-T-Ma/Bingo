@@ -15,6 +15,10 @@ header {
     text-align: center;
 }
 
+.entry-container > * {
+    margin: 5px auto;
+}
+
 .bingo-table {
     --size: 300px;
     width: var(--size);
@@ -40,6 +44,10 @@ header {
     border: 1px solid black;
 }
 
+.td-ready {
+    cursor: pointer;
+}
+
 .td-ready:hover {
     background: lightgray;
 }
@@ -51,6 +59,11 @@ header {
 
 .room-members {
     margin-left: 30px;
+}
+
+.room-members > div:first-child {
+    font-size: large;
+    font-weight: bold;
 }
 
 .btn-container {

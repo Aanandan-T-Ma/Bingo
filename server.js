@@ -28,7 +28,8 @@ io.on('connection', socket => {
         socket.join(data.roomId);
         socket.roomId = data.roomId;
         socket.name = data.name;
-        io.sockets.in(data.roomId).emit('newClient', { id: socket.id, name: data.name })
+        socket.ready = false;
+        io.sockets.in(data.roomId).emit('newClient', { id: socket.id, name: data.name, ready: false })
         io.to(socket.id).emit('members', getClients(socket.roomId))
     })
 
@@ -43,6 +44,19 @@ io.on('connection', socket => {
         socket.leave(socket.roomId);
         console.log('A user disconnected!')
     })
+
+    socket.on('ready', () => {
+        socket.ready = true;
+        io.sockets.in(socket.roomId).emit('playerReady', { id: socket.id })
+    })
+
+    socket.on('strike', data => {
+        io.sockets.in(socket.roomId).emit('strike', data)
+    })
+
+    socket.on('start', data => {
+        io.sockets.in(socket.roomId).emit('start', data)
+    })
 })
 
 function getClients(roomId) {
@@ -53,6 +67,7 @@ function getClients(roomId) {
         clients.push({
             id: clientSocket.id,
             name: clientSocket.name,
+            ready: clientSocket.ready
         })
     })
     return clients

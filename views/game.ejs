@@ -7,7 +7,7 @@
     <title>Game</title>
     <link rel="stylesheet" href="styles.css">
     <script>
-        const ROOM_ID = "<%= roomId %>"
+        const ROOM_ID = '<%= roomId %>'
     </script>
     <script src="/socket.io-client/dist/socket.io.js" defer></script>
     <script src="script.js" defer></script>
@@ -18,43 +18,14 @@
     </header>
     <main>
         <div class="game-container">
-            <table class="bingo-table">
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                </tr>
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                </tr>
-            </table>
+            <div class="table-container">
+                <table class="bingo-table"></table>
+                <div class="btn-container">
+                    <button class="ready-btn" onclick="onReady()">Ready</button>
+                    <button class="start-btn" onclick="onStart()">Start</button>
+                </div>
+                <div class="curr-player"></div>
+            </div>
             <div class="vertical-line"></div>
             <aside class="room-members">
                 <div>Players</div>

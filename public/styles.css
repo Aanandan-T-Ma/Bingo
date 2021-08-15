@@ -36,8 +36,12 @@ header {
     background: transparent;
 }
 
-td {
+.bingo-table td {
     border: 1px solid black;
+}
+
+.td-ready:hover {
+    background: lightgray;
 }
 
 .vertical-line {
@@ -47,4 +51,17 @@ td {
 
 .room-members {
     margin-left: 30px;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.btn-container > button {
+    margin: 10px auto;
+}
+
+.curr-player {
+    text-align: center;
 }

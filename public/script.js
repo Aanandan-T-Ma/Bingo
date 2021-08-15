@@ -56,24 +56,38 @@ socket.on('playerReady', data => {
 })
 
 socket.on('strike', data => {
-    for(let i = 0; i < inputs.length; i++){
+    let i
+    for(i = 0; i < inputs.length; i++){
         if(inputs[i].value == data.number){
-            inputs[i].style.textDecoration = 'line-through'
+            inputs[i].style.cursor = 'default'
+            tds[i].style.backgroundColor = 'red'
             break
         }
     }
-    striken[data.number-1] = true
+    striken[data.number] = true
+    let won = checkWin(Math.floor(i / 5) + 1, Math.floor(i % 5) + 1)
+    if(won) return;
     changeTurn()
 })
 
 socket.on('start', data => {
     for(let i = 0; i < tds.length; i++) 
-        tds[i].onclick = strikeCell
-    for(let i = 0; i < 25; i++)
+        tds[i].addEventListener('click', strikeCell)
+    for(let i = 0; i <= 25; i++)
         striken.push(false)
     startBtn.innerHTML = `Started By ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
     startBtn.disabled = true
     changeTurn()
+})
+
+socket.on('end', data => {
+    alert(`${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game`)
+    currPlayer.innerHTML = `Winner: ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
+    for(let i = 0; i < tds.length; i++){
+        tds[i].removeEventListener('click', strikeCell)
+        tds[i].classList.remove('td-ready')
+        inputs[i].style.cursor = 'default'
+    }
 })
 
 function enterRoom() {
@@ -85,9 +99,9 @@ function enterRoom() {
 
 function renderTable() {
     bingoTable.innerHTML = ''
-    for (let i = 0; i < 5; i++) {
+    for (let i = 1; i <= 5; i++) {
         let tr = document.createElement('tr')
-        for (let j = 0; j < 5; j++) {
+        for (let j = 1; j <= 5; j++) {
             let td = document.createElement('td')
             let input = document.createElement('input')
             input.type = 'text'
@@ -166,11 +180,59 @@ function strikeCell(event) {
     console.log('after');
     let value = Number(document.getElementById(event.target.id).value)
     console.log(value);
-    if(striken[value - 1]) return;
+    if(striken[value]) return;
     socket.emit('strike', { id: curMember.id, number: value })
 }
 
 function changeTurn() {
     turn = (turn + 1) % members.length
     currPlayer.innerHTML = `Current Player: ${members[turn].name}`
+}
+
+function checkWin(row, col) {
+    let i, value, win = true
+    for(i = 1; i <= 5 && win; i++) {
+        value = Number(document.getElementById(`cell-${row}-${i}`).value)
+        if(!striken[value]) 
+            win = false
+    }
+    if(win) {
+        socket.emit('end', curMember)
+        return true
+    }
+    win = true
+    for(i = 1; i <= 5 && win; i++) {
+        value = Number(document.getElementById(`cell-${i}-${col}`).value)
+        if(!striken[value]) 
+            win = false
+    }
+    if(win) {
+        socket.emit('end', curMember)
+        return true
+    }
+    if(row === col) {
+        win = true
+        for(i = 1; i <= 5 && win; i++) {
+            value = Number(document.getElementById(`cell-${i}-${i}`).value)
+            if(!striken[value]) 
+                win = false
+        }
+        if(win) {
+            socket.emit('end', curMember)
+            return true
+        }
+    }
+    if(row + col === 6) {
+        win = true
+        for(i = 1; i <= 5 && win; i++) {
+            value = Number(document.getElementById(`cell-${i}-${6 - i}`).value)
+            if(!striken[value]) 
+                win = false
+        }
+        if(win) {
+            socket.emit('end', curMember)
+            return true
+        }
+    }
+    return false
 }

@@ -57,6 +57,10 @@ io.on('connection', socket => {
     socket.on('start', data => {
         io.sockets.in(socket.roomId).emit('start', data)
     })
+
+    socket.on('end', data => {
+        io.sockets.in(socket.roomId).emit('end', data)
+    })
 })
 
 function getClients(roomId) {

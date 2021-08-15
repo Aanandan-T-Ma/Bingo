@@ -65,3 +65,31 @@ header {
 .curr-player {
     text-align: center;
 }
+
+@media only screen and (max-width: 600px) {
+    .game-container {
+        width: 100%;
+    }
+    .bingo-table {
+        --size: 200px;
+        margin-right: 10px;
+    }
+    .room-members {
+        margin-left: 10px;
+    }
+    .vertical-line {
+        width: 3px;
+    }
+    .bingo-table input {
+        font-size: 100%;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .bingo-table {
+        --size: 150px;
+    }
+    .vertical-line {
+        width: 1px;
+    }
+}

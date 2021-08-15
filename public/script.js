@@ -118,7 +118,7 @@ function renderTable() {
 function renderMembers(){
     playersList.innerHTML = ''
     members.forEach((member, index) => {
-        playersList.innerHTML += `<li>${member.name} ${curMemberIndex === index ? '(You)' : ''} ${member.ready ? '&#10004;' : ''}</li>`
+        playersList.innerHTML += `<div>${member.name} ${curMemberIndex === index ? '(You)' : ''} ${member.ready ? '&#10004;' : ''}</div>`
     })
 }
 

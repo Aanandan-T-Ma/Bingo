@@ -250,12 +250,12 @@ function announceWinners() {
     currPlayer.style.fontWeight = 'bold'
     if(winners.length === 1){
         let data = winners[0]
-        alert(`${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game`)
+        alert(`Bingo!! ${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game!`)
         currPlayer.innerHTML = `Winner: ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
     }
     else {
         let w = winners.map(winner => winner.name + (winner.id === curMember.id ? ' (You)' : '')).join(', ')
-        alert(`Game ended in a draw between ${w}`)
+        alert(`Bingo!! Game ended in a draw between ${w}!`)
         currPlayer.innerHTML = `Draw between ${w}`
     }
 }

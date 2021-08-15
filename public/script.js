@@ -14,7 +14,6 @@ var curMember, turn, curMemberIndex
 var striken = []
 var winners = []
 
-gameContainer.style.display = 'none'
 startBtn.style.display = 'none'
 
 socket.on('newClient', data => {

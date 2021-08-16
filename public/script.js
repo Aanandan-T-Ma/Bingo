@@ -6,6 +6,8 @@ const playersList = document.querySelector('.players-list')
 const bingoTable = document.querySelector('.bingo-table')
 const startBtn = document.querySelector('.start-btn')
 const readyBtn = document.querySelector('.ready-btn')
+const generateBtn = document.querySelector('.generate-btn')
+const restartBtn = document.querySelector('.restart-btn')
 const currPlayer = document.querySelector('.curr-player')
 var inputs, tds
 
@@ -15,6 +17,7 @@ var striken = []
 var winners = []
 
 startBtn.style.display = 'none'
+restartBtn.style.display = 'none'
 
 socket.on('newClient', data => {
     members.push(data)
@@ -51,6 +54,7 @@ socket.on('playerReady', data => {
     if (isAllReady()) {
         turn = -1
         readyBtn.style.display = 'none'
+        generateBtn.style.display = 'none'
         startBtn.style.display = 'block'
     }
 })
@@ -140,6 +144,7 @@ function onReady() {
     }
     socket.emit('ready')
     readyBtn.disabled = true
+    generateBtn.disabled = true
     disableAllInputs()
 }
 
@@ -180,7 +185,7 @@ function isAllReady() {
     return allReady
 }
 
-function onStart() {
+function startGame() {
     socket.emit('start', curMember)
 }
 
@@ -249,7 +254,7 @@ function announceWinners() {
     currPlayer.style.fontWeight = 'bold'
     if(winners.length === 1){
         let data = winners[0]
-        alert(`Bingo!! ${data.name} ${data.id === curMember.id ? '(You)' : ''} won the game!`)
+        alert(`Bingo!! ${data.name}${data.id === curMember.id ? ' (You)' : ''} won the game!`)
         currPlayer.innerHTML = `Winner: ${data.name} ${data.id === curMember.id ? '(You)' : ''}`
     }
     else {
@@ -257,4 +262,21 @@ function announceWinners() {
         alert(`Bingo!! Game ended in a draw between ${w}!`)
         currPlayer.innerHTML = `Draw between ${w}`
     }
+    startBtn.style.display = 'none'
+    restartBtn.style.display = 'block'
+}
+
+function generateRandomGrid() {
+    let numbers = []
+    for(let i = 1; i <= 25; i++)
+        numbers.push(i)
+    for(let i = 0; i < inputs.length; i++) {
+        let j = Math.floor(Math.random() * numbers.length)
+        inputs[i].value = numbers[j]
+        numbers.splice(j, 1)
+    }
+}
+
+function restartGame() {
+    location.reload()
 }
